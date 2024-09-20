@@ -16,3 +16,10 @@
 .btn.selected {
   background-color: lightblue;
 }
+
+.loading {
+  display: "flex";
+  justify-content: "center";
+  align-items: "center";
+  height: "400px";
+}

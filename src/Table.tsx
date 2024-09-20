@@ -13,6 +13,7 @@ type TableProps = {
 type RowProps = {
   id: number;
   appName: string;
+  icon: string;
   downloads: string;
   revenue: string;
   rpd: string;
@@ -43,8 +44,19 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
   const columns: GridColDef<RowProps>[] = [
     {
       field: "appName",
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <img
+            src={params.row.icon}
+            alt=""
+            style={{ width: 35, height: 35, marginRight: 3 }}
+          />
+          {params.row.appName}
+        </div>
+      ),
       renderHeader: () => <strong>App Name</strong>,
       width: 150,
+      editable: true,
     },
     {
       field: "downloads",
@@ -92,6 +104,7 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
       downloads: formattedDownloads,
       revenue: `$${formattedRevenue}`,
       rpd: rpd === "-" ? "-" : `$${rpd}`,
+      icon: appData.icon,
     };
     return row;
   });
