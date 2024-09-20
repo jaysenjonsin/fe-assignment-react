@@ -27,14 +27,14 @@ const mockMeasure = "revenue";
 
 describe("Table", () => {
   it("renders a table", () => {
-    render(<Table data={mockData} measure={mockMeasure} />);
+    render(<Table data={mockData} selectedMeasure={mockMeasure} />);
 
     expect(screen.getByText("App Name")).toBeInTheDocument();
     expect(screen.getByText("Downloads")).toBeInTheDocument();
   });
 
   it("does not render a table if data is empty", () => {
-    render(<Table data={[]} measure="" />);
+    render(<Table data={[]} selectedMeasure="" />);
 
     expect(screen.queryByText("App Name")).not.toBeInTheDocument();
     expect(screen.queryByText("Downloads")).not.toBeInTheDocument();

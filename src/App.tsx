@@ -7,7 +7,8 @@ import { useState } from "react";
 const App = () => {
   const data = useData();
   const [selectedMeasure, setSelectedMeasure] = useState("downloads");
-
+  const [startDate, setStartDate] = useState("2020-01-01");
+  const [endDate, setEndDate] = useState("2020-01-07");
   const handleMeasure = (measure: string) => {
     setSelectedMeasure(measure);
   };
@@ -16,10 +17,20 @@ const App = () => {
     <div className="container">
       <div>
         <p>
-          Start Date: <input value="2020-01-01" />
+          Start Date:{" "}
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
         </p>
         <p>
-          End Date: <input value="2020-01-07" />
+          End Date:{" "}
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
         </p>
         <div className="measures">
           <button
@@ -36,8 +47,13 @@ const App = () => {
           </button>
         </div>
       </div>
-      <Chart data={data} measure={selectedMeasure} />
-      <Table data={data} measure={selectedMeasure} />
+      <Chart
+        data={data}
+        selectedMeasure={selectedMeasure}
+        startDate={startDate}
+        endDate={endDate}
+      />
+      <Table data={data} selectedMeasure={selectedMeasure} />
     </div>
   );
 };

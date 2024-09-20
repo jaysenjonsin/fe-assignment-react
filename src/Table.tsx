@@ -3,7 +3,7 @@ import type { Response } from "./types";
 
 type TableProps = {
   data: Response;
-  measure: string;
+  selectedMeasure: string;
 };
 
 type RowProps = {

@@ -24,21 +24,37 @@ const mockData: Response = [
 ];
 
 const mockMeasure = "revenue";
+const mockStartDate = "2020-01-01";
+const mockEndDate = "2020-01-07";
 
 describe("Chart", () => {
   it("renders a chart", () => {
-    render(<Chart data={mockData} measure={mockMeasure} />);
+    render(
+      <Chart
+        data={mockData}
+        selectedMeasure={mockMeasure}
+        startDate={mockStartDate}
+        endDate={mockEndDate}
+      />,
+    );
     expect(screen.getByText("Downloads")).toBeInTheDocument();
   });
 
   it("renders the title and subtitle", () => {
-    render(<Chart data={mockData} measure={mockMeasure} />);
+    render(
+      <Chart
+        data={mockData}
+        selectedMeasure={mockMeasure}
+        startDate={mockStartDate}
+        endDate={mockEndDate}
+      />,
+    );
     expect(screen.getByText("Downloads by App")).toBeInTheDocument();
     expect(screen.getByText("TODO")).toBeInTheDocument();
   });
 
   it("does not render a chart if data is empty", () => {
-    render(<Chart data={[]} measure="" />);
+    render(<Chart data={[]} selectedMeasure="" startDate="" endDate="" />);
     expect(screen.queryByText("Downloads")).not.toBeInTheDocument();
   });
 });

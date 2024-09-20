@@ -6,23 +6,33 @@ import { dayjsUtc } from "./dayjs";
 
 type ChartProps = {
   data: Response;
-  measure: string;
+  selectedMeasure: string;
+  startDate: string;
+  endDate: string;
 };
 
-const Chart = ({ data }: ChartProps) => {
+const Chart = ({ data, selectedMeasure, startDate, endDate }: ChartProps) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
   const [seriesData, setSeriesData] = useState<Highcharts.SeriesOptionsType[]>(
     [],
   );
-
+  //Highcharts.SeriesOptionsType[]
   useEffect(() => {
-    const newSeriesData: Highcharts.SeriesOptionsType[] = data.map((series) => {
+    const startMs = dayjsUtc(startDate).valueOf();
+    const endMs = dayjsUtc(endDate).valueOf();
+
+    const filteredData: Highcharts.SeriesOptionsType[] = data.map((series) => {
+      const filteredSeries = series.data.filter(([date]) => {
+        const dateMs = dayjsUtc(date).valueOf();
+        return dateMs >= startMs && dateMs <= endMs;
+      });
+
       return {
         name: series.name,
         type: "line",
-        data: series.data.map(([date, value]) => {
-          const dateMs = dayjsUtc(date).valueOf(); // convert date string to unix milliseconds
-          const yValue = value as number;
+        data: filteredSeries.map(([date, downloads, revenue]) => {
+          const dateMs = dayjsUtc(date).valueOf();
+          const yValue = selectedMeasure === "downloads" ? downloads : revenue;
           return {
             x: dateMs,
             y: yValue,
@@ -30,8 +40,9 @@ const Chart = ({ data }: ChartProps) => {
         }),
       };
     });
-    setSeriesData(newSeriesData);
-  }, [data]);
+
+    setSeriesData(filteredData);
+  }, [data, startDate, endDate, selectedMeasure]);
 
   if (!seriesData.length) {
     return null;
@@ -39,18 +50,21 @@ const Chart = ({ data }: ChartProps) => {
 
   const options: Highcharts.Options = {
     title: {
-      text: "Downloads by App",
+      text: `${selectedMeasure === "downloads" ? "Downloads" : "Revenue"} by App`,
     },
     subtitle: {
-      text: "TODO",
+      text: `${dayjsUtc(startDate).format("MMM DD, YYYY")} - ${dayjsUtc(endDate).format("MMM DD, YYYY")}`,
     },
     yAxis: {
       title: {
-        text: "Downloads",
+        text: selectedMeasure === "downloads" ? "Downloads" : "Revenue ($)",
       },
     },
     xAxis: {
       type: "datetime",
+      labels: {
+        format: "{value:%b %d, '%y}",
+      },
     },
     legend: {
       layout: "vertical",
