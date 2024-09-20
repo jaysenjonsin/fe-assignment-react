@@ -3,15 +3,23 @@ import * as Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import type { Response } from "./types";
 import { dayjsUtc } from "./dayjs";
+import { CircularProgress } from "@mui/material";
 
 type ChartProps = {
   data: Response;
   selectedMeasure: string;
   startDate: string;
   endDate: string;
+  loading: boolean;
 };
 
-const Chart = ({ data, selectedMeasure, startDate, endDate }: ChartProps) => {
+const Chart = ({
+  data,
+  selectedMeasure,
+  startDate,
+  endDate,
+  loading,
+}: ChartProps) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
   const [seriesData, setSeriesData] = useState<Highcharts.SeriesOptionsType[]>(
     [],
@@ -44,8 +52,19 @@ const Chart = ({ data, selectedMeasure, startDate, endDate }: ChartProps) => {
     setSeriesData(filteredData);
   }, [data, startDate, endDate, selectedMeasure]);
 
-  if (!seriesData.length) {
-    return null;
+  if (loading || !seriesData.length) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "400px",
+        }}
+      >
+        <CircularProgress />
+      </div>
+    );
   }
 
   const options: Highcharts.Options = {

@@ -35,6 +35,7 @@ describe("Chart", () => {
         selectedMeasure={mockMeasure}
         startDate={mockStartDate}
         endDate={mockEndDate}
+        loading={false}
       />,
     );
     expect(screen.getByText("Downloads")).toBeInTheDocument();
@@ -47,6 +48,7 @@ describe("Chart", () => {
         selectedMeasure={mockMeasure}
         startDate={mockStartDate}
         endDate={mockEndDate}
+        loading={false}
       />,
     );
     expect(screen.getByText("Downloads by App")).toBeInTheDocument();
@@ -54,7 +56,15 @@ describe("Chart", () => {
   });
 
   it("does not render a chart if data is empty", () => {
-    render(<Chart data={[]} selectedMeasure="" startDate="" endDate="" />);
+    render(
+      <Chart
+        data={[]}
+        selectedMeasure=""
+        startDate=""
+        endDate=""
+        loading={false}
+      />,
+    );
     expect(screen.queryByText("Downloads")).not.toBeInTheDocument();
   });
 });

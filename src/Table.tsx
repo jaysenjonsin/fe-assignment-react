@@ -1,12 +1,13 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import type { Response } from "./types";
 import { dayjsUtc } from "./dayjs";
+import { CircularProgress } from "@mui/material";
 
 type TableProps = {
   data: Response;
-  selectedMeasure: string;
   startDate: string;
   endDate: string;
+  loading: boolean;
 };
 
 type RowProps = {
@@ -20,9 +21,20 @@ type RowProps = {
 const addCommas = (x: number): string =>
   x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-const Table = ({ data, selectedMeasure, startDate, endDate }: TableProps) => {
-  if (!data.length) {
-    return null;
+const Table = ({ data, startDate, endDate, loading }: TableProps) => {
+  if (loading || !data.length) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "400px",
+        }}
+      >
+        <CircularProgress />
+      </div>
+    );
   }
 
   const startMs = dayjsUtc(startDate).valueOf();

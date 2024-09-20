@@ -5,10 +5,11 @@ import "./App.css";
 import { useState } from "react";
 
 const App = () => {
-  const data = useData();
+  const { data, loading } = useData();
   const [selectedMeasure, setSelectedMeasure] = useState("downloads");
   const [startDate, setStartDate] = useState("2020-01-01");
   const [endDate, setEndDate] = useState("2020-01-07");
+
   const handleMeasure = (measure: string) => {
     setSelectedMeasure(measure);
   };
@@ -47,18 +48,22 @@ const App = () => {
           </button>
         </div>
       </div>
-      <Chart
-        data={data}
-        selectedMeasure={selectedMeasure}
-        startDate={startDate}
-        endDate={endDate}
-      />
-      <Table
-        data={data}
-        selectedMeasure={selectedMeasure}
-        startDate={startDate}
-        endDate={endDate}
-      />
+
+      <>
+        <Chart
+          data={data}
+          selectedMeasure={selectedMeasure}
+          startDate={startDate}
+          endDate={endDate}
+          loading={loading}
+        />
+        <Table
+          data={data}
+          startDate={startDate}
+          endDate={endDate}
+          loading={loading}
+        />
+      </>
     </div>
   );
 };

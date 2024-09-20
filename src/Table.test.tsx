@@ -32,9 +32,9 @@ describe("Table", () => {
     render(
       <Table
         data={mockData}
-        selectedMeasure={mockMeasure}
         startDate={mockStartDate}
         endDate={mockEndDate}
+        loading={false}
       />,
     );
 
@@ -43,7 +43,7 @@ describe("Table", () => {
   });
 
   it("does not render a table if data is empty", () => {
-    render(<Table data={[]} selectedMeasure="" startDate="" endDate="" />);
+    render(<Table data={[]} startDate="" endDate="" loading={false} />);
 
     expect(screen.queryByText("App Name")).not.toBeInTheDocument();
     expect(screen.queryByText("Downloads")).not.toBeInTheDocument();
