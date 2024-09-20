@@ -12,18 +12,13 @@ type TableProps = {
 type RowProps = {
   id: number;
   appName: string;
-  downloads: number | string;
-  revenue: number | string;
+  downloads: string;
+  revenue: string;
   rpd: string;
 };
 
 const addCommas = (x: number): string =>
   x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-const calculateRPD = (revenue: number, downloads: number) => {
-  if (downloads === 0 || revenue === 0) return "-";
-  else return revenue / downloads;
-};
 
 const Table = ({ data, selectedMeasure, startDate, endDate }: TableProps) => {
   if (!data.length) {
@@ -84,29 +79,10 @@ const Table = ({ data, selectedMeasure, startDate, endDate }: TableProps) => {
       appName: appData.name,
       downloads: formattedDownloads,
       revenue: `$${formattedRevenue}`,
-      rpd: `$${rpd}`,
+      rpd: rpd === "-" ? "-" : `$${rpd}`,
     };
     return row;
   });
-
-  // const rows = data.map((appData) => {
-  //   const totalDownloads = appData.data.reduce((total, curr) => {
-  //     return total + curr[1];
-  //   }, 0);
-  //   const formatedDownloads = addCommas(totalDownloads);
-  //   const formattedRevenue = addCommas(
-  //     appData.data[appData.data.length - 1][2],
-  //   );
-
-  //   const row: RowProps = {
-  //     id: appData.id,
-  //     appName: appData.name,
-  //     downloads: formatedDownloads,
-  //     revenue: `$${formattedRevenue}`,
-  //     rpd: "",
-  //   };
-  //   return row;
-  // });
 
   return (
     <div style={{ height: 400, width: "100%" }}>
