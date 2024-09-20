@@ -6,6 +6,7 @@ import { dayjsUtc } from "./dayjs";
 
 type ChartProps = {
   data: Response;
+  measure: string;
 };
 
 const Chart = ({ data }: ChartProps) => {
