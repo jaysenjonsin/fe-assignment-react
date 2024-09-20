@@ -16,7 +16,7 @@ const Chart = ({ data, selectedMeasure, startDate, endDate }: ChartProps) => {
   const [seriesData, setSeriesData] = useState<Highcharts.SeriesOptionsType[]>(
     [],
   );
-  //Highcharts.SeriesOptionsType[]
+
   useEffect(() => {
     const startMs = dayjsUtc(startDate).valueOf();
     const endMs = dayjsUtc(endDate).valueOf();

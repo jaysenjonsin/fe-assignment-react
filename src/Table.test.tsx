@@ -24,17 +24,26 @@ const mockData: Response = [
 ];
 
 const mockMeasure = "revenue";
+const mockStartDate = "2020-01-01";
+const mockEndDate = "2020-01-07";
 
 describe("Table", () => {
   it("renders a table", () => {
-    render(<Table data={mockData} selectedMeasure={mockMeasure} />);
+    render(
+      <Table
+        data={mockData}
+        selectedMeasure={mockMeasure}
+        startDate={mockStartDate}
+        endDate={mockEndDate}
+      />,
+    );
 
     expect(screen.getByText("App Name")).toBeInTheDocument();
     expect(screen.getByText("Downloads")).toBeInTheDocument();
   });
 
   it("does not render a table if data is empty", () => {
-    render(<Table data={[]} selectedMeasure="" />);
+    render(<Table data={[]} selectedMeasure="" startDate="" endDate="" />);
 
     expect(screen.queryByText("App Name")).not.toBeInTheDocument();
     expect(screen.queryByText("Downloads")).not.toBeInTheDocument();

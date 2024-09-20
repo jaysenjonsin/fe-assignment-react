@@ -53,7 +53,12 @@ const App = () => {
         startDate={startDate}
         endDate={endDate}
       />
-      <Table data={data} selectedMeasure={selectedMeasure} />
+      <Table
+        data={data}
+        selectedMeasure={selectedMeasure}
+        startDate={startDate}
+        endDate={endDate}
+      />
     </div>
   );
 };
