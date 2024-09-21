@@ -1,7 +1,7 @@
 Code Inefficiencies:
 
 Logic Repetition:
--I implemented an isValidDate useCallback function in both the Table and Chart components. This logic could instead be extracted into a utility function, but I didn't want to add any extra files to the base project. Another utility function I could include would be a filtering function based on the dates, as this is used in both the Chart and the Table. (some other possible util functions I could have extracted into a seperate util file: formatting the numbers with commas, calculating total downloads/revenue, data validity check)
+-I implemented an isValidDate useCallback function in both the Table and Chart components. This logic could instead be extracted into a utility function, but I didn't want to add any extra files to the base project. Another utility function I could include would be a filtering function based on the dates, as this is used in both the Chart and the Table. (some other possible util functions I could have extracted into a seperate util file: formatting the numbers with commas, calculating total downloads/revenue, date validity check)
 
 - I also handled loading state for both the initial request as well as the loading state for when the user is inputting a date, which could be considered repetitive considering the data is static. Some logic can probably be written cleaner - ex. calculating rpd in the table.
 
