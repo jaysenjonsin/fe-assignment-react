@@ -24,11 +24,42 @@ const Chart = ({
   const [seriesData, setSeriesData] = useState<Highcharts.SeriesOptionsType[]>(
     [],
   );
+  const [showInvalidMessage, setShowInvalidMessage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Define valid date range
+  const validStartDate = dayjsUtc("2020-01-01").valueOf();
+  const validEndDate = dayjsUtc("2020-01-07").valueOf();
+
+  const isValidDate = (dateStr: string): boolean => {
+    const date = dayjsUtc(dateStr);
+    return (
+      date.isValid() &&
+      date.valueOf() >= validStartDate &&
+      date.valueOf() <= validEndDate
+    );
+  };
 
   useEffect(() => {
+    setIsLoading(true);
+    setShowInvalidMessage(false);
+
+    if (!isValidDate(startDate) || !isValidDate(endDate)) {
+      const timer = setTimeout(() => {
+        setShowInvalidMessage(true);
+        setIsLoading(false);
+        setSeriesData([]);
+      }, 2000); // 2 seconds delay for user input
+
+      return () => {
+        clearTimeout(timer); // Clear timer on cleanup
+      };
+    }
+
     const startMs = dayjsUtc(startDate).valueOf();
     const endMs = dayjsUtc(endDate).valueOf();
 
+    // Prepare chart data
     const filteredData: Highcharts.SeriesOptionsType[] = data.map((series) => {
       const filteredSeries = series.data.filter(([date]) => {
         const dateMs = dayjsUtc(date).valueOf();
@@ -50,9 +81,10 @@ const Chart = ({
     });
 
     setSeriesData(filteredData);
+    setIsLoading(false);
   }, [data, startDate, endDate, selectedMeasure]);
 
-  if (loading || !seriesData.length) {
+  if (loading || isLoading) {
     return (
       <div
         style={{
@@ -63,6 +95,23 @@ const Chart = ({
         }}
       >
         <CircularProgress />
+      </div>
+    );
+  }
+
+  if (showInvalidMessage) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "500px",
+          fontSize: "20px",
+        }}
+      >
+        Not a valid date. Please select a date between 2020-01-01 and
+        2020-01-07.
       </div>
     );
   }
@@ -82,7 +131,7 @@ const Chart = ({
     xAxis: {
       type: "datetime",
       labels: {
-        format: "{value:%b %d, '%y}",
+        format: "{value:%b %d, %y}",
       },
     },
     legend: {

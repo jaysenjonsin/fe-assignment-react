@@ -3,6 +3,7 @@ import Table from "./Table";
 import useData from "./useData";
 import "./App.css";
 import { useState } from "react";
+import { CircularProgress } from "@mui/material";
 
 const App = () => {
   const { data, loading } = useData();
@@ -48,22 +49,34 @@ const App = () => {
           </button>
         </div>
       </div>
-
-      <>
-        <Chart
-          data={data}
-          selectedMeasure={selectedMeasure}
-          startDate={startDate}
-          endDate={endDate}
-          loading={loading}
-        />
-        <Table
-          data={data}
-          startDate={startDate}
-          endDate={endDate}
-          loading={loading}
-        />
-      </>
+      {loading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "400px",
+          }}
+        >
+          <CircularProgress />
+        </div>
+      ) : (
+        <>
+          <Chart
+            data={data}
+            selectedMeasure={selectedMeasure}
+            startDate={startDate}
+            endDate={endDate}
+            loading={loading}
+          />
+          <Table
+            data={data}
+            startDate={startDate}
+            endDate={endDate}
+            loading={loading}
+          />
+        </>
+      )}
     </div>
   );
 };

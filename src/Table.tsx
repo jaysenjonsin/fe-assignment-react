@@ -2,6 +2,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import type { Response } from "./types";
 import { dayjsUtc } from "./dayjs";
 import { CircularProgress } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 
 type TableProps = {
   data: Response;
@@ -23,7 +24,42 @@ const addCommas = (x: number): string =>
   x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 const Table = ({ data, startDate, endDate, loading }: TableProps) => {
-  if (loading || !data.length) {
+  const [showInvalidMessage, setShowInvalidMessage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const validStartDate = dayjsUtc("2020-01-01").valueOf();
+  const validEndDate = dayjsUtc("2020-01-07").valueOf();
+
+  const startMs = useMemo(() => dayjsUtc(startDate).valueOf(), [startDate]);
+  const endMs = useMemo(() => dayjsUtc(endDate).valueOf(), [endDate]);
+  const isValidDate = (dateStr: string): boolean => {
+    const date = dayjsUtc(dateStr);
+    return (
+      date.isValid() &&
+      date.valueOf() >= validStartDate &&
+      date.valueOf() <= validEndDate
+    );
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    setShowInvalidMessage(false);
+
+    if (!isValidDate(startDate) || !isValidDate(endDate)) {
+      const timer = setTimeout(() => {
+        setShowInvalidMessage(true);
+        setIsLoading(false);
+      }, 2000); // 2 seconds delay for user typing
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+
+    setIsLoading(false);
+  }, [data, startDate, endDate]);
+
+  // Loading spinner
+  if (loading || isLoading) {
     return (
       <div
         style={{
@@ -38,8 +74,10 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
     );
   }
 
-  const startMs = dayjsUtc(startDate).valueOf();
-  const endMs = dayjsUtc(endDate).valueOf();
+  // Render empty fragment if the date is invalid
+  if (showInvalidMessage) {
+    return <></>;
+  }
 
   const columns: GridColDef<RowProps>[] = [
     {
