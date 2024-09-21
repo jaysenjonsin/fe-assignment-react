@@ -109,8 +109,8 @@ const Chart = ({
           fontSize: "20px",
         }}
       >
-        Not a valid date. Please select a date between 2020-01-01 and
-        2020-01-07.
+        Not a valid date. Please select a date between 01-01-2020 and
+        01-07-2020.
       </div>
     );
   }
