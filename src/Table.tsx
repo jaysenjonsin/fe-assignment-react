@@ -86,7 +86,7 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
         <div style={{ display: "flex", alignItems: "center" }}>
           <img
             src={params.row.icon}
-            alt=""
+            alt={params.row.appName}
             style={{ width: 35, height: 35, marginRight: 3 }}
           />
           {params.row.appName}
