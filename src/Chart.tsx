@@ -27,7 +27,6 @@ const Chart = ({
   const [showInvalidMessage, setShowInvalidMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Define valid date range
   const validStartDate = dayjsUtc("2020-01-01").valueOf();
   const validEndDate = dayjsUtc("2020-01-07").valueOf();
 
@@ -51,14 +50,13 @@ const Chart = ({
       }, 2000); // 2 seconds delay for user input
 
       return () => {
-        clearTimeout(timer); // Clear timer on cleanup
+        clearTimeout(timer);
       };
     }
 
     const startMs = dayjsUtc(startDate).valueOf();
     const endMs = dayjsUtc(endDate).valueOf();
 
-    // Prepare chart data
     const filteredData: Highcharts.SeriesOptionsType[] = data.map((series) => {
       const filteredSeries = series.data.filter(([date]) => {
         const dateMs = dayjsUtc(date).valueOf();

@@ -58,7 +58,6 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
     setIsLoading(false);
   }, [data, startDate, endDate]);
 
-  // Loading spinner
   if (loading || isLoading) {
     return (
       <div
@@ -74,7 +73,6 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
     );
   }
 
-  // Render empty fragment if the date is invalid
   if (showInvalidMessage) {
     return <></>;
   }
