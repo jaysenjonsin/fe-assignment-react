@@ -2,7 +2,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import type { Response } from "./types";
 import { dayjsUtc } from "./dayjs";
 import { CircularProgress } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type TableProps = {
   data: Response;
@@ -31,14 +31,17 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
 
   const startMs = useMemo(() => dayjsUtc(startDate).valueOf(), [startDate]);
   const endMs = useMemo(() => dayjsUtc(endDate).valueOf(), [endDate]);
-  const isValidDate = (dateStr: string): boolean => {
-    const date = dayjsUtc(dateStr);
-    return (
-      date.isValid() &&
-      date.valueOf() >= validStartDate &&
-      date.valueOf() <= validEndDate
-    );
-  };
+  const isValidDate = useCallback(
+    (dateStr: string): boolean => {
+      const date = dayjsUtc(dateStr);
+      return (
+        date.isValid() &&
+        date.valueOf() >= validStartDate &&
+        date.valueOf() <= validEndDate
+      );
+    },
+    [validStartDate, validEndDate],
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -48,15 +51,12 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
       const timer = setTimeout(() => {
         setShowInvalidMessage(true);
         setIsLoading(false);
-      }, 2000); // 2 seconds delay for user typing
-
-      return () => {
-        clearTimeout(timer);
-      };
+      }, 2000);
+      return () => clearTimeout(timer);
     }
 
     setIsLoading(false);
-  }, [data, startDate, endDate]);
+  }, [data, startDate, endDate, isValidDate]);
 
   if (loading || isLoading) {
     return (
@@ -73,26 +73,23 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
     );
   }
 
-  if (showInvalidMessage) {
-    return <></>;
-  }
+  if (showInvalidMessage) return null;
 
   const columns: GridColDef<RowProps>[] = [
     {
       field: "appName",
-      renderCell: (params) => (
+      renderCell: ({ row }) => (
         <div style={{ display: "flex", alignItems: "center" }}>
           <img
-            src={params.row.icon}
-            alt={params.row.appName}
+            src={row.icon}
+            alt={row.appName}
             style={{ width: 35, height: 35, marginRight: 3 }}
           />
-          {params.row.appName}
+          {row.appName}
         </div>
       ),
       renderHeader: () => <strong>App Name</strong>,
       width: 150,
-      editable: true,
     },
     {
       field: "downloads",
@@ -104,45 +101,36 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
       renderHeader: () => <strong>Revenue</strong>,
       width: 150,
     },
-    {
-      field: "rpd",
-      renderHeader: () => <strong>RPD</strong>,
-      width: 150,
-    },
+    { field: "rpd", renderHeader: () => <strong>RPD</strong>, width: 150 },
   ];
 
   const rows = data.map((appData) => {
-    // Filter based on date
     const filteredData = appData.data.filter(([date]) => {
       const dateMs = dayjsUtc(date).valueOf();
       return dateMs >= startMs && dateMs <= endMs;
     });
 
-    const totalDownloads = filteredData.reduce((total, curr) => {
-      return total + curr[1];
-    }, 0);
-
-    const totalRevenue = filteredData.reduce((total, curr) => {
-      return total + curr[2];
-    }, 0);
-
+    const totalDownloads = filteredData.reduce(
+      (total, curr) => total + curr[1],
+      0,
+    );
+    const totalRevenue = filteredData.reduce(
+      (total, curr) => total + curr[2],
+      0,
+    );
     const rpd =
       totalRevenue <= 0 || totalDownloads <= 0
         ? "-"
-        : (totalRevenue / totalDownloads / 100).toFixed(2);
+        : `$${(totalRevenue / totalDownloads / 100).toFixed(2)}`;
 
-    const formattedDownloads = addCommas(totalDownloads);
-    const formattedRevenue = addCommas(totalRevenue / 100);
-
-    const row: RowProps = {
+    return {
       id: appData.id,
       appName: appData.name,
-      downloads: formattedDownloads,
-      revenue: `$${formattedRevenue}`,
-      rpd: rpd === "-" ? "-" : `$${rpd}`,
+      downloads: addCommas(totalDownloads),
+      revenue: `$${addCommas(totalRevenue / 100)}`,
+      rpd,
       icon: appData.icon,
     };
-    return row;
   });
 
   return (

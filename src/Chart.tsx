@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import type { Response } from "./types";
@@ -30,14 +30,18 @@ const Chart = ({
   const validStartDate = dayjsUtc("2020-01-01").valueOf();
   const validEndDate = dayjsUtc("2020-01-07").valueOf();
 
-  const isValidDate = (dateStr: string): boolean => {
-    const date = dayjsUtc(dateStr);
-    return (
-      date.isValid() &&
-      date.valueOf() >= validStartDate &&
-      date.valueOf() <= validEndDate
-    );
-  };
+  const isValidDate = useCallback(
+    (dateStr: string): boolean => {
+      const date = dayjsUtc(dateStr);
+      return (
+        date.isValid() &&
+        date.valueOf() >= validStartDate &&
+        date.valueOf() <= validEndDate
+      );
+    },
+    [validStartDate, validEndDate],
+  );
+
   useEffect(() => {
     setIsLoading(true);
     setShowInvalidMessage(false);
@@ -47,11 +51,8 @@ const Chart = ({
         setShowInvalidMessage(true);
         setIsLoading(false);
         setSeriesData([]);
-      }, 2000); // 2 seconds delay for user input
-
-      return () => {
-        clearTimeout(timer);
-      };
+      }, 2000);
+      return () => clearTimeout(timer);
     }
 
     const startMs = dayjsUtc(startDate).valueOf();
@@ -66,20 +67,16 @@ const Chart = ({
       return {
         name: series.name,
         type: "line",
-        data: filteredSeries.map(([date, downloads, revenue]) => {
-          const dateMs = dayjsUtc(date).valueOf();
-          const yValue = selectedMeasure === "downloads" ? downloads : revenue;
-          return {
-            x: dateMs,
-            y: yValue,
-          };
-        }),
+        data: filteredSeries.map(([date, downloads, revenue]) => ({
+          x: dayjsUtc(date).valueOf(),
+          y: selectedMeasure === "downloads" ? downloads : revenue,
+        })),
       };
     });
 
     setSeriesData(filteredData);
     setIsLoading(false);
-  }, [data, startDate, endDate, selectedMeasure]);
+  }, [data, startDate, endDate, selectedMeasure, isValidDate]);
 
   if (loading || isLoading) {
     return (
@@ -127,9 +124,7 @@ const Chart = ({
     },
     xAxis: {
       type: "datetime",
-      labels: {
-        format: "{value:%b %d, %y}",
-      },
+      labels: { format: "{value:%b %d, %y}" },
     },
     legend: {
       layout: "vertical",
@@ -138,14 +133,7 @@ const Chart = ({
     },
     plotOptions: {
       series: {
-        marker: {
-          enabled: false,
-          states: {
-            hover: {
-              enabled: false,
-            },
-          },
-        },
+        marker: { enabled: false, states: { hover: { enabled: false } } },
       },
     },
     series: seriesData,
