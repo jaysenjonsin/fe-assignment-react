@@ -13,5 +13,8 @@ useData Hook:
 Noticed that data was rendering very slowly due to calls to useData on every re-render. Instead, I changed useData to only be called upon the initial page load since the data is static anyway.
 
 
+Testing:
+Could include more unit testing with more time.
+
 Styling:
 Styling can be improved with more time.

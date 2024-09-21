@@ -39,7 +39,6 @@ const Chart = ({
       date.valueOf() <= validEndDate
     );
   };
-
   useEffect(() => {
     setIsLoading(true);
     setShowInvalidMessage(false);

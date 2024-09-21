@@ -134,7 +134,7 @@ const Table = ({ data, startDate, endDate, loading }: TableProps) => {
         : (totalRevenue / totalDownloads / 100).toFixed(2);
 
     const formattedDownloads = addCommas(totalDownloads);
-    const formattedRevenue = addCommas(totalRevenue);
+    const formattedRevenue = addCommas(totalRevenue / 100);
 
     const row: RowProps = {
       id: appData.id,
